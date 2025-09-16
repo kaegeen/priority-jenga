@@ -1,0 +1,72 @@
+import React, { useState } from "react";
+
+export default function PriorityJenga() {
+  const [tasks, setTasks] = useState([]);
+  const [title, setTitle] = useState("");
+  const [priority, setPriority] = useState(1);
+
+  const addTask = () => {
+    if (!title.trim()) return;
+    setTasks([...tasks, { id: Date.now(), title, priority }]);
+    setTitle("");
+    setPriority(1);
+  };
+
+  const tiltAmount = tasks.reduce((acc, t) => acc + (t.priority - 1), 0);
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
+      <h1 className="text-2xl font-bold mb-4">Priority Jenga</h1>
+
+      <div className="flex gap-2 mb-6">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Task"
+          className="border px-3 py-2 rounded"
+        />
+        <select
+          value={priority}
+          onChange={(e) => setPriority(Number(e.target.value))}
+          className="border px-3 py-2 rounded"
+        >
+          <option value={1}>Low</option>
+          <option value={2}>Medium</option>
+          <option value={3}>High</option>
+        </select>
+        <button
+          onClick={addTask}
+          className="bg-black text-white px-4 py-2 rounded"
+        >
+          Add
+        </button>
+      </div>
+
+      <div
+        className="w-64 bg-white border rounded shadow p-2 relative transition-transform"
+        style={{
+          transform: `rotate(${Math.min(tiltAmount * 2, 15)}deg)`
+        }}
+      >
+        {tasks.map((t) => (
+          <div
+            key={t.id}
+            className={`p-2 mb-1 rounded text-white ${
+              t.priority === 1
+                ? "bg-green-500"
+                : t.priority === 2
+                ? "bg-yellow-500"
+                : "bg-red-500"
+            }`}
+          >
+            {t.title}
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-4 text-sm text-gray-600">
+        Tower tilt: <strong>{tiltAmount * 2}°</strong>
+      </p>
+    </div>
+  );
+}
